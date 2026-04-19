@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Batman Watch Order</title>
+
+<style>
+body {
+  margin:0;
+  background:#0b0b0b;
+  color:white;
+  font-family:Arial;
+}
+
+/* HERO */
+.hero {
+  height:100vh;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  background:linear-gradient(to bottom,#000, #111);
+}
+
+.hero h1 {font-size:40px;}
+.btn {
+  background:red;
+  padding:12px 25px;
+  border:none;
+  color:white;
+  cursor:pointer;
+}
+
+/* ROW */
+.row {
+  margin:20px;
+}
+
+.row h2 {
+  margin-left:10px;
+}
+
+.scroll {
+  display:flex;
+  overflow-x:auto;
+  gap:10px;
+}
+
+/* CARD */
+.card {
+  min-width:150px;
+  cursor:pointer;
+  transition:0.3s;
+}
+
+.card img {
+  width:100%;
+  border-radius:10px;
+}
+
+.card:hover {
+  transform:scale(1.1);
+}
+
+/* MODAL */
+.modal {
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  background:rgba(0,0,0,0.9);
+  display:none;
+  justify-content:center;
+  align-items:center;
+}
+
+.modal.active {display:flex;}
+
+.modal iframe {
+  width:90%;
+  height:50vh;
+}
+
+/* RATING */
+.stars span {
+  font-size:20px;
+  cursor:pointer;
+}
+
+@media(max-width:600px){
+  .card {min-width:120px;}
+}
+</style>
+</head>
+
+<body>
+
+<!-- HERO -->
+<div class="hero">
+  <h1>WELCOME TO DC</h1>
+  <p>Watch Batman the right way</p>
+  <button class="btn" onclick="showContent()">WATCH ORDER</button>
+</div>
+
+<div id="content" style="display:none;"></div>
+
+<!-- MODAL -->
+<div class="modal" id="modal">
+  <iframe id="player"></iframe>
+</div>
+
+<script>
+
+/* SHOW CONTENT */
+function showContent(){
+  document.querySelector(".hero").style.display="none";
+  document.getElementById("content").style.display="block";
+}
+
+/* MODAL */
+function play(video){
+  document.getElementById("modal").classList.add("active");
+  document.getElementById("player").src = video;
+}
+
+document.getElementById("modal").onclick = ()=>{
+  document.getElementById("modal").classList.remove("active");
+  document.getElementById("player").src="";
+}
+
+/* MOVIE DATA */
+
+const data = {
+"DCAU":[
+"Batman Mask of the Phantasm",
+"Batman Mr Freeze Subzero",
+"Batman Beyond Return of Joker",
+"Batman Mystery of Batwoman",
+"Batman and Harley Quinn"
+],
+
+"DCAMU":[
+"Flashpoint Paradox","Justice League War","Son of Batman",
+"Throne of Atlantis","Batman vs Robin","Batman Bad Blood",
+"Teen Titans","Justice League Dark","Death of Superman",
+"Reign of Superman","Batman Hush","Apokolips War"
+],
+
+"Tomorrowverse":[
+"Long Halloween 1","Long Halloween 2",
+"Legion of Superheroes","Warworld",
+"Crisis Part 1","Part 2","Part 3"
+],
+
+"Standalone":[
+"Batman vs Dracula","Gotham Knight","Crisis on Two Earths",
+"Under the Red Hood","Year One","Dark Knight Returns 1",
+"Part 2","Superman Unbound","Assault on Arkham",
+"Killing Joke","Caped Crusader","Lego Batman",
+"Two Face","Gotham by Gaslight","Batman Ninja",
+"Batman vs TMNT","Death in Family","Soul of Dragon",
+"Injustice","Super Sons","Doom Gotham",
+"Merry Batman","Aztec Batman","Yakuza League"
+],
+
+"DCUAOM":[
+"Public Enemies","Apocalypse","Animal Instincts",
+"Monster Mayhem","Mech vs Mutants"
+]
+};
+
+/* RENDER */
+const content = document.getElementById("content");
+
+for(let category in data){
+  let row = `<div class="row"><h2>${category}</h2><div class="scroll">`;
+
+  data[category].forEach(movie=>{
+    row += `
+      <div class="card" onclick="play('https://www.youtube.com/embed/dQw4w9WgXcQ')">
+        <img src="https://via.placeholder.com/150x220?text=${movie}">
+        <p>${movie}</p>
+      </div>`;
+  });
+
+  row += "</div></div>";
+  content.innerHTML += row;
+}
+
+</script>
+
+</body>
+</html>
