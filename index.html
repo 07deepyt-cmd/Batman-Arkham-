@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Batman Watch Order</title>
+
+<style>
+body{
+  margin:0;
+  font-family:Arial;
+  background:black;
+  color:white;
+}
+
+/* HERO */
+.hero{
+  height:100vh;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  position:relative;
+  text-align:center;
+}
+
+.hero h1{font-size:26px;}
+
+.btn{
+  padding:10px 20px;
+  background:red;
+  border:none;
+  color:white;
+  margin-top:15px;
+}
+
+/* BATMAN */
+.batman{
+  position:absolute;
+  bottom:0;
+  right:10%;
+  width:120px;
+  height:200px;
+  background:url('https://i.imgur.com/Qr6Z6Yg.png') no-repeat center/contain;
+}
+
+/* RAIN */
+canvas{
+  position:absolute;
+  top:0;
+  left:0;
+}
+
+/* BATS */
+.bat{
+  position:absolute;
+  width:18px;
+  height:18px;
+  background:url('https://i.imgur.com/7yUvePI.png') no-repeat center/contain;
+  animation:fly 8s linear;
+}
+
+@keyframes fly{
+  from{transform:translateX(-100px);}
+  to{transform:translateX(110vw);}
+}
+
+/* LIGHTNING */
+.flash{
+  position:fixed;
+  width:100%;
+  height:100%;
+  background:white;
+  opacity:0;
+  pointer-events:none;
+}
+
+/* MAIN */
+#main{
+  display:none;
+  padding:20px;
+}
+
+h2{color:red;}
+
+.movie{
+  border:1px solid red;
+  margin:15px 0;
+  padding:10px;
+}
+
+.movie h3{color:red;}
+
+/* VIDEO */
+.modal{
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  background:black;
+  display:none;
+  justify-content:center;
+  align-items:center;
+}
+
+.modal iframe{
+  width:90%;
+  height:50vh;
+}
+</style>
+</head>
+
+<body>
+
+<div class="flash" id="flash"></div>
+
+<!-- HERO -->
+<div class="hero">
+  <canvas id="rain"></canvas>
+  <div class="batman"></div>
+
+  <h1>WELCOME TO DC</h1>
+  <p>Watch Batman the right way</p>
+
+  <button class="btn" onclick="startSite()">WATCH ORDER</button>
+</div>
+
+<!-- MAIN -->
+<div id="main">
+
+<p>Most people watch Batman completely wrong. Different timelines, different versions... And the story feels confusing.</p>
+
+<h2>DCAU</h2>
+<div id="dcau"></div>
+
+<h2>DCAMU</h2>
+<div id="dcamu"></div>
+
+<h2>Tomorrowverse</h2>
+<div id="tomorrow"></div>
+
+<h2>Standalone</h2>
+<div id="standalone"></div>
+
+<h2>DCUAOM</h2>
+<div id="uaom"></div>
+
+</div>
+
+<!-- VIDEO -->
+<div class="modal" id="modal" onclick="closeVideo()">
+  <iframe id="video" allowfullscreen></iframe>
+</div>
+
+<script>
+
+/* START SITE */
+function startSite(){
+  document.querySelector('.hero').style.display="none";
+  document.getElementById("main").style.display="block";
+}
+
+/* VIDEO */
+function playVideo(link){
+  document.getElementById("modal").style.display="flex";
+  document.getElementById("video").src=link;
+}
+
+function closeVideo(){
+  document.getElementById("modal").style.display="none";
+  document.getElementById("video").src="";
+}
+
+/* RAIN */
+let canvas=document.getElementById("rain");
+let ctx=canvas.getContext("2d");
+
+canvas.width=window.innerWidth;
+canvas.height=window.innerHeight;
+
+let rain=[];
+for(let i=0;i<120;i++){
+  rain.push({x:Math.random()*canvas.width,y:Math.random()*canvas.height});
+}
+
+setInterval(()=>{
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  ctx.strokeStyle="white";
+  rain.forEach(d=>{
+    ctx.beginPath();
+    ctx.moveTo(d.x,d.y);
+    ctx.lineTo(d.x+2,d.y+10);
+    ctx.stroke();
+    d.y+=10;
+    if(d.y>canvas.height) d.y=0;
+  });
+},30);
+
+/* BATS */
+setInterval(()=>{
+  let bat=document.createElement("div");
+  bat.className="bat";
+  bat.style.top=Math.random()*window.innerHeight+"px";
+  document.body.appendChild(bat);
+  setTimeout(()=>bat.remove(),8000);
+},2000);
+
+/* LIGHTNING */
+function lightning(){
+  let f=document.getElementById("flash");
+  f.style.opacity=0.7;
+  setTimeout(()=>f.style.opacity=0,120);
+}
+
+setInterval(()=>{
+  if(Math.random()<0.2) lightning();
+},5000);
+
+/* MOVIE SYSTEM */
+function createMovie(name){
+  return `
+  <div class="movie">
+    <h3>${name}</h3>
+    <p>Release Date: (Add)</p>
+    <p>Director: (Add)</p>
+    <p>Cast: (Add)</p>
+    <p>Short summary...</p>
+    <button onclick="playVideo('https://www.youtube.com/embed/dQw4w9WgXcQ')">WATCH</button>
+  </div>`;
+}
+
+/* DATA */
+
+const dcau=[
+"Batman Mask of the Phantasm",
+"Batman Mr Freeze Subzero",
+"Batman Beyond Return of the Joker",
+"Batman Mystery of the Batwoman",
+"Batman and Harley Quinn"
+];
+
+const dcamu=[
+"Justice League Flashpoint Paradox",
+"Justice League War",
+"Son of Batman",
+"Justice League Throne of Atlantis",
+"Batman vs Robin",
+"Batman Bad Blood",
+"Justice League Teen Titans",
+"Justice League Dark",
+"The Death of Superman",
+"Reign of the Superman",
+"Batman Hush",
+"Justice League Dark Apokolips War"
+];
+
+const tomorrow=[
+"Batman Long Halloween Part 1",
+"Batman Long Halloween Part 2",
+"Legion of Superheroes",
+"Justice League Warworld",
+"Crisis on Infinite Earths Part 1",
+"Part 2",
+"Part 3"
+];
+
+const standalone=[
+"Batman vs Dracula",
+"Batman Gotham Knight",
+"Justice League Crisis on Two Earths",
+"Batman Under the Red Hood",
+"Batman Year One",
+"Dark Knight Returns Part 1",
+"Part 2",
+"Superman Unbound",
+"Batman Assault on Arkham",
+"Batman Killing Joke",
+"Return of Caped Crusader",
+"Lego Batman",
+"Batman vs Two Face",
+"Gotham by Gaslight",
+"Batman Ninja",
+"Batman vs TMNT",
+"Death in the Family",
+"Soul of the Dragon",
+"Injustice",
+"Battle of the Super Sons",
+"Doom that came to Gotham",
+"Merry Little Batman",
+"Aztec Batman",
+"Batman Ninja vs Yakuza League"
+];
+
+const uaom=[
+"Superman Batman Public Enemies",
+"Superman Batman Apocalypse",
+"Batman Unlimited Animal Instincts",
+"Monster Mayhem",
+"Mech vs Mutants"
+];
+
+/* RENDER */
+function render(id,list){
+  document.getElementById(id).innerHTML=list.map(createMovie).join("");
+}
+
+render("dcau",dcau);
+render("dcamu",dcamu);
+render("tomorrow",tomorrow);
+render("standalone",standalone);
+render("uaom",uaom);
+
+</script>
+
+</body>
+  </html>
