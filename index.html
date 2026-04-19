@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Batman Watch Order</title>
+
+<style>
+
+/* RESET */
+body {
+  margin:0;
+  background:black;
+  color:white;
+  font-family:Arial;
+  overflow-x:hidden;
+}
+
+/* HERO */
+.hero {
+  position:relative;
+  height:100vh;
+  overflow:hidden;
+}
+
+/* SKYLINE */
+.skyline {
+  position:absolute;
+  bottom:0;
+  width:200%;
+  height:300px;
+  background:url('https://i.imgur.com/3ZQ3Z6M.png') repeat-x;
+  animation: skylineMove 60s linear infinite;
+}
+
+@keyframes skylineMove {
+  from {transform:translateX(0);}
+  to {transform:translateX(-50%);}
+}
+
+/* CLOUDS */
+.clouds {
+  position:absolute;
+  width:200%;
+  height:100%;
+  background:url('https://i.imgur.com/Vz6bF7R.png') repeat-x;
+  opacity:0.2;
+  animation: cloudsMove 120s linear infinite;
+}
+
+@keyframes cloudsMove {
+  from {transform:translateX(0);}
+  to {transform:translateX(-50%);}
+}
+
+/* BATMAN */
+.batman {
+  position:absolute;
+  bottom:0;
+  right:10%;
+  width:150px;
+  height:250px;
+  background:url('https://i.imgur.com/Qr6Z6Yg.png') no-repeat center/contain;
+}
+
+/* CONTENT */
+.hero-content {
+  position:relative;
+  z-index:2;
+  height:100%;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+}
+
+/* BUTTON */
+.btn {
+  padding:12px 25px;
+  background:red;
+  border:none;
+  color:white;
+  cursor:pointer;
+  transition:0.3s;
+}
+
+.btn:hover {
+  transform:scale(1.1);
+}
+
+/* PAGES */
+.page {
+  opacity:0;
+  transform:translateY(20px);
+  transition:0.5s;
+  display:none;
+}
+
+.page.active {
+  display:block;
+  opacity:1;
+  transform:translateY(0);
+}
+
+/* MOVIES */
+.movie {
+  border:1px solid red;
+  margin:20px;
+  padding:15px;
+}
+
+.movie h3 { color:red; }
+
+/* VIDEO MODAL */
+.video-modal {
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  background:black;
+  display:none;
+  justify-content:center;
+  align-items:center;
+}
+
+.video-modal.active {
+  display:flex;
+}
+
+.video-modal iframe {
+  width:90%;
+  height:50vh;
+}
+
+/* FLASH */
+.flash {
+  position:fixed;
+  width:100%;
+  height:100%;
+  background:white;
+  opacity:0;
+  pointer-events:none;
+}
+
+/* BATS */
+.bat {
+  position:absolute;
+  width:25px;
+  height:25px;
+  background:url('https://i.imgur.com/7yUvePI.png') no-repeat center/contain;
+  animation: flyPath linear;
+}
+
+@keyframes flyPath {
+  0% {transform:translate(-100px,0);}
+  100% {transform:translate(110vw,50px);}
+}
+
+/* MOBILE */
+@media(max-width:600px){
+  h1 {font-size:22px;}
+  .batman {width:100px;}
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="flash" id="flash"></div>
+
+<!-- HERO -->
+<section class="hero">
+  <canvas id="rain"></canvas>
+  <div class="clouds"></div>
+  <div class="skyline"></div>
+  <div class="batman"></div>
+  <div id="bats"></div>
+
+  <div class="hero-content">
+    <h1>WELCOME TO DC</h1>
+    <p>Watch Batman the right way</p>
+    <button class="btn" onclick="startSound(); showPage('main')">WATCH ORDER</button>
+    <button onclick="toggleSound()">🔊</button>
+  </div>
+</section>
+
+<!-- MAIN -->
+<section id="main" class="page">
+  <p>Most people watch Batman completely wrong...</p>
+
+  <div class="movie">
+    <h3>Batman Mask of the Phantasm</h3>
+    <button onclick="playMovie('https://www.youtube.com/embed/dQw4w9WgXcQ')">WATCH</button>
+  </div>
+</section>
+
+<!-- VIDEO -->
+<div class="video-modal" id="videoModal">
+  <iframe id="videoFrame"></iframe>
+</div>
+
+<!-- AUDIO -->
+<audio id="rainSound" loop>
+  <source src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_6d3d4c1f4f.mp3">
+</audio>
+
+<audio id="thunderSound">
+  <source src="https://cdn.pixabay.com/download/audio/2022/03/10/audio_5b9d7d8b6c.mp3">
+</audio>
+
+<script>
+
+/* PAGE */
+function showPage(id){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+/* VIDEO */
+function playMovie(video){
+  document.getElementById("videoModal").classList.add("active");
+  document.getElementById("videoFrame").src = video;
+}
+
+document.getElementById("videoModal").onclick = function(){
+  this.classList.remove("active");
+  document.getElementById("videoFrame").src="";
+}
+
+/* RAIN */
+const canvas = document.getElementById("rain");
+const ctx = canvas.getContext("2d");
+
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+let rain = [];
+
+for(let i=0;i<200;i++){
+  rain.push({x:Math.random()*canvas.width,y:Math.random()*canvas.height});
+}
+
+function drawRain(){
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  ctx.strokeStyle="white";
+
+  rain.forEach(r=>{
+    ctx.beginPath();
+    ctx.moveTo(r.x,r.y);
+    ctx.lineTo(r.x+2,r.y+10);
+    ctx.stroke();
+    r.y+=10;
+    if(r.y>canvas.height) r.y=0;
+  });
+}
+
+setInterval(drawRain,30);
+
+/* BATS */
+function createBat(){
+  const bat = document.createElement("div");
+  bat.className="bat";
+  bat.style.top=Math.random()*window.innerHeight+"px";
+  bat.style.animationDuration=(5+Math.random()*5)+"s";
+  document.getElementById("bats").appendChild(bat);
+  setTimeout(()=>bat.remove(),8000);
+}
+setInterval(createBat,1000);
+
+/* LIGHTNING */
+function lightning(){
+  const flash=document.getElementById("flash");
+  flash.style.opacity=0.8;
+  setTimeout(()=>flash.style.opacity=0,100);
+
+  document.getElementById("thunderSound").play();
+}
+setInterval(()=>{if(Math.random()<0.2) lightning();},5000);
+
+/* SOUND */
+let started=false;
+
+function startSound(){
+  if(started) return;
+  document.getElementById("rainSound").volume=0.3;
+  document.getElementById("rainSound").play();
+  started=true;
+}
+
+function toggleSound(){
+  const rain=document.getElementById("rainSound");
+  if(rain.paused) rain.play(); else rain.pause();
+}
+
+</script>
+
+</body>
+</html>
